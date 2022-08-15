@@ -1,10 +1,19 @@
 package com.dima.myapplication.util;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 public class NetworkUtils {
 
@@ -40,6 +49,48 @@ public class NetworkUtils {
         try {
             result = new URL(uri.toString());
         } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private static class DownloadJSONTask extends AsyncTask<URL, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(URL... urls) {
+            JSONObject result = null;
+            if (urls == null || urls.length == 0)
+                return result;
+            StringBuilder builder = new StringBuilder();
+            HttpURLConnection connection = null;
+            try {
+                connection = (HttpURLConnection) urls[0].openConnection();
+                InputStream in = connection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(in);
+                BufferedReader bufferedReader = new BufferedReader(reader);
+                String line = bufferedReader.readLine();
+                while (line != null) {
+                    builder.append(line);
+                    line = bufferedReader.readLine();
+                }
+                result = new JSONObject(builder.toString());
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+            return result;
+        }
+    }
+
+    public static JSONObject getJSONFromNetwork(int sortBy, int page) {
+        JSONObject result = null;
+        URL url = buildURL(sortBy, page);
+        DownloadJSONTask downloadJSONTask = new DownloadJSONTask();
+        try {
+            result = downloadJSONTask.execute(url).get();
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return result;
