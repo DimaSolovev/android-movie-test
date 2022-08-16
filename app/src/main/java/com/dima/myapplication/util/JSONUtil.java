@@ -1,0 +1,51 @@
+package com.dima.myapplication.util;
+
+import com.dima.myapplication.data.Movie;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class JSONUtil {
+
+    private static final String KEY_RESULTS = "results";
+    private static final String KEY_ID = "id";
+    private static final String KEY_VOTE_COUNT = "vote_count";
+    private static final String KEY_TITLE = "title";
+    private static final String KEY_ORIGINAL_TITLE = "original_title";
+    private static final String KEY_OVERVIEW = "overview";
+    private static final String KEY_POSTER_PATH = "poster_path";
+    private static final String KEY_BACKGROUND_PATH = "backdrop_path";
+    private static final String KEY_VOTE_AVERAGE = "vote_average";
+    private static final String KEY_RELEASE_DATE = "release_date";
+
+    public static List<Movie> getMoviesFromJSON(JSONObject jsonObject) {
+        List<Movie> result = new ArrayList<>();
+        if (jsonObject == null) {
+            return result;
+        }
+        try {
+            JSONArray jsonArray = jsonObject.getJSONArray(KEY_RESULTS);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject film = jsonArray.getJSONObject(i);
+                int id = film.getInt(KEY_ID);
+                int voteCount = film.getInt(KEY_VOTE_COUNT);
+                String title = film.getString(KEY_TITLE);
+                String originalTitle = film.getString(KEY_ORIGINAL_TITLE);
+                String overview = film.getString(KEY_OVERVIEW);
+                String posterPath = film.getString(KEY_POSTER_PATH);
+                String backgroundPath = film.getString(KEY_BACKGROUND_PATH);
+                double voteAverage = film.getDouble(KEY_VOTE_AVERAGE);
+                String releaseDate = film.getString(KEY_RELEASE_DATE);
+                Movie movie = new Movie(id, voteCount, title, originalTitle, overview, posterPath, backgroundPath, voteAverage, releaseDate);
+                result.add(movie);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+}

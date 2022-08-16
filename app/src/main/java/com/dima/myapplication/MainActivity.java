@@ -1,16 +1,18 @@
 package com.dima.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.dima.myapplication.util.NetworkUtils;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.dima.myapplication.data.Movie;
+import com.dima.myapplication.util.JSONUtil;
+import com.dima.myapplication.util.NetworkUtil;
 
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,12 +20,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String url = NetworkUtils.buildURL(NetworkUtils.POPULARITY,1).toString();
-        JSONObject jsonObject = NetworkUtils.getJSONFromNetwork(NetworkUtils.POPULARITY,1);
-        if(jsonObject == null){
-            Toast.makeText(this, "ошибка", Toast.LENGTH_LONG).show();
-        }else {
-            Toast.makeText(this, "успешно", Toast.LENGTH_LONG).show();
-        }
+
     }
 }
