@@ -11,6 +11,10 @@ import java.util.List;
 
 public class JSONUtil {
 
+    private static final String BASE_POSTER_URL = "https://image.tmdb.org/t/p/";
+    private static final String SMALL_POSTER_SIZE = "w185";
+    private static final String BIG_POSTER_SIZE = "w780";
+
     private static final String KEY_RESULTS = "results";
     private static final String KEY_ID = "id";
     private static final String KEY_VOTE_COUNT = "vote_count";
@@ -36,11 +40,12 @@ public class JSONUtil {
                 String title = film.getString(KEY_TITLE);
                 String originalTitle = film.getString(KEY_ORIGINAL_TITLE);
                 String overview = film.getString(KEY_OVERVIEW);
-                String posterPath = film.getString(KEY_POSTER_PATH);
+                String posterPath = BASE_POSTER_URL + SMALL_POSTER_SIZE + film.getString(KEY_POSTER_PATH);
+                String bigPosterPath = BASE_POSTER_URL + BIG_POSTER_SIZE + film.getString(KEY_POSTER_PATH);
                 String backgroundPath = film.getString(KEY_BACKGROUND_PATH);
                 double voteAverage = film.getDouble(KEY_VOTE_AVERAGE);
                 String releaseDate = film.getString(KEY_RELEASE_DATE);
-                Movie movie = new Movie(id, voteCount, title, originalTitle, overview, posterPath, backgroundPath, voteAverage, releaseDate);
+                Movie movie = new Movie(id, voteCount, title, originalTitle, overview, posterPath, bigPosterPath, backgroundPath, voteAverage, releaseDate);
                 result.add(movie);
             }
         } catch (JSONException e) {
