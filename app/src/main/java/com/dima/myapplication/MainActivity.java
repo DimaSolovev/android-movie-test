@@ -2,6 +2,8 @@ package com.dima.myapplication;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -22,17 +24,32 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewPosters;
     private MovieAdapter movieAdapter;
+    private Switch switchSort;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerViewPosters = findViewById(R.id.recyclerViewPosters);
-        recyclerViewPosters.setLayoutManager(new GridLayoutManager(this,2));
         movieAdapter = new MovieAdapter();
-        JSONObject jsonObject = NetworkUtil.getJSONFromNetwork(1, NetworkUtil.POPULARITY);
-        List<Movie> movies = JSONUtil.getMoviesFromJSON(jsonObject);
-        movieAdapter.setMovies(movies);
+        switchSort = findViewById(R.id.switchSort);
+        recyclerViewPosters.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerViewPosters.setAdapter(movieAdapter);
+        switchSort.setChecked(true);
+        switchSort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    JSONObject jsonObject = NetworkUtil.getJSONFromNetwork(1, NetworkUtil.TOP_RATED);
+                    List<Movie> movies = JSONUtil.getMoviesFromJSON(jsonObject);
+                    movieAdapter.setMovies(movies);
+                }else {
+                    JSONObject jsonObject = NetworkUtil.getJSONFromNetwork(1, NetworkUtil.POPULARITY);
+                    List<Movie> movies = JSONUtil.getMoviesFromJSON(jsonObject);
+                    movieAdapter.setMovies(movies);
+                }
+            }
+        });
+        switchSort.setChecked(false);
     }
 }
