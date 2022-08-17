@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -49,6 +51,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         switchSort.setChecked(false);
+        movieAdapter.setOnPosterClickListener(new MovieAdapter.OnPosterClickListener() {
+            @Override
+            public void onPosterClick(int id) {
+                Toast.makeText(MainActivity.this, "Click " + id, Toast.LENGTH_SHORT).show();
+            }
+        });
+        movieAdapter.setOnReachEndListener(new MovieAdapter.OnReachEndListener() {
+            @Override
+            public void onReachEnd() {
+                Toast.makeText(MainActivity.this, "End", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setMethodOfSort(boolean isChecked){
