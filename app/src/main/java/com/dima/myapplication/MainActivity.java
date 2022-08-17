@@ -2,8 +2,10 @@ package com.dima.myapplication;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -25,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerViewPosters;
     private MovieAdapter movieAdapter;
     private Switch switchSort;
+    private TextView textViewPopularity;
+    private TextView textViewRating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,23 +37,45 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewPosters = findViewById(R.id.recyclerViewPosters);
         movieAdapter = new MovieAdapter();
         switchSort = findViewById(R.id.switchSort);
+        textViewPopularity = findViewById(R.id.textViewPopularity);
+        textViewRating = findViewById(R.id.textViewRating);
         recyclerViewPosters.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerViewPosters.setAdapter(movieAdapter);
         switchSort.setChecked(true);
         switchSort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    JSONObject jsonObject = NetworkUtil.getJSONFromNetwork(1, NetworkUtil.TOP_RATED);
-                    List<Movie> movies = JSONUtil.getMoviesFromJSON(jsonObject);
-                    movieAdapter.setMovies(movies);
-                }else {
-                    JSONObject jsonObject = NetworkUtil.getJSONFromNetwork(1, NetworkUtil.POPULARITY);
-                    List<Movie> movies = JSONUtil.getMoviesFromJSON(jsonObject);
-                    movieAdapter.setMovies(movies);
-                }
+                setMethodOfSort(isChecked);
             }
         });
         switchSort.setChecked(false);
+    }
+
+    private void setMethodOfSort(boolean isChecked){
+        int methodOfSort;
+        if(isChecked){
+            methodOfSort = NetworkUtil.TOP_RATED;
+            textViewRating.setTextColor(getResources().getColor(R.color.pink));
+            textViewPopularity.setTextColor(getResources().getColor(R.color.white));
+
+        }else {
+            methodOfSort = NetworkUtil.POPULARITY;
+            textViewPopularity.setTextColor(getResources().getColor(R.color.pink));
+            textViewRating.setTextColor(getResources().getColor(R.color.white));
+        }
+        JSONObject jsonObject = NetworkUtil.getJSONFromNetwork(1, methodOfSort);
+        List<Movie> movies = JSONUtil.getMoviesFromJSON(jsonObject);
+        movieAdapter.setMovies(movies);
+    }
+
+
+    public void onClickPopularity(View view) {
+        setMethodOfSort(false);
+        switchSort.setChecked(false);
+    }
+
+    public void onClickRating(View view) {
+        setMethodOfSort(true);
+        switchSort.setChecked(true);
     }
 }

@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:text="@string/sort_by_popularity"
         android:textColor="@color/white"
+        android:onClick="onClickPopularity"
         app:layout_constraintBottom_toBottomOf="@+id/switchSort"
         app:layout_constraintEnd_toStartOf="@+id/switchSort"
         app:layout_constraintTop_toTopOf="@+id/switchSort" />
@@ -31,6 +32,7 @@
         android:layout_height="wrap_content"
         android:text="@string/sort_by_rating"
         android:textColor="@color/white"
+        android:onClick="onClickRating"
         app:layout_constraintBottom_toBottomOf="@+id/switchSort"
         app:layout_constraintStart_toEndOf="@+id/switchSort"
         app:layout_constraintTop_toTopOf="@+id/switchSort" />
