@@ -10,15 +10,19 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class MainVIewModel extends AndroidViewModel {
+public class MainViewModel extends AndroidViewModel {
 
     private static MovieDatabase database;
     private LiveData<List<Movie>> movies;
 
-    public MainVIewModel(@NonNull Application application) {
+    public MainViewModel(@NonNull Application application) {
         super(application);
         database = MovieDatabase.getInstance(getApplication());
         movies = database.movieDao().getAllMovies();
+    }
+
+    public LiveData<List<Movie>> getMovies() {
+        return movies;
     }
 
     public Movie getMovieById(int id) {
