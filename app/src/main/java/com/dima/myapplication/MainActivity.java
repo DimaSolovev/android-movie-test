@@ -1,5 +1,6 @@
 package com.dima.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -59,7 +60,10 @@ public class MainActivity extends AppCompatActivity {
         movieAdapter.setOnPosterClickListener(new MovieAdapter.OnPosterClickListener() {
             @Override
             public void onPosterClick(int id) {
-                Toast.makeText(MainActivity.this, "Click " + id, Toast.LENGTH_SHORT).show();
+                Movie movie = movieAdapter.getMovies().get(id);
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("id", movie.getId());
+                startActivity(intent);
             }
         });
         movieAdapter.setOnReachEndListener(new MovieAdapter.OnReachEndListener() {
@@ -89,15 +93,15 @@ public class MainActivity extends AppCompatActivity {
             textViewPopularity.setTextColor(getResources().getColor(R.color.pink));
             textViewRating.setTextColor(getResources().getColor(R.color.white));
         }
-        downloadData(methodOfSort,1);
+        downloadData(methodOfSort, 1);
     }
 
-    private void downloadData(int methodOfSort, int page){
+    private void downloadData(int methodOfSort, int page) {
         JSONObject jsonObject = NetworkUtil.getJSONFromNetwork(1, methodOfSort);
         List<Movie> movies = JSONUtil.getMoviesFromJSON(jsonObject);
-        if(movies != null && !movies.isEmpty()){
+        if (movies != null && !movies.isEmpty()) {
             viewModel.deleteAllMovies();
-            for (Movie movie: movies){
+            for (Movie movie : movies) {
                 viewModel.insertMovie(movie);
             }
         }
