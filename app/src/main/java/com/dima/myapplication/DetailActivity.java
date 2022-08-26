@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.dima.myapplication.data.MainViewModel;
 import com.dima.myapplication.data.Movie;
+import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -43,5 +44,11 @@ public class DetailActivity extends AppCompatActivity {
         }
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         Movie movie = viewModel.getMovieById(id);
+        Picasso.get().load(movie.getBigPosterPath()).into(imageViewBigPoster);
+        textViewTitle.setText(movie.getTitle());
+        textViewOriginalTitle.setText(movie.getOriginalTitle());
+        textViewRating.setText(Double.toString(movie.getVoteAverage()));
+        textViewDate.setText(movie.getReleaseDate());
+        textViewOverview.setText(movie.getOverview());
     }
 }
