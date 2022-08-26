@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     public void onClickPopularity(View view) {
         setMethodOfSort(false);
         switchSort.setChecked(false);
