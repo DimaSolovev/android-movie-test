@@ -52,7 +52,7 @@ public class MainViewModel extends AndroidViewModel {
         new DeleteMovieTask().execute(movie);
     }
 
-    public void deleteFavouriteMovies(FavouriteMovie movie) {
+    public void deleteFavouriteMovie(FavouriteMovie movie) {
         new DeleteFavouriteMovieTask().execute(movie);
     }
 
@@ -106,7 +106,7 @@ public class MainViewModel extends AndroidViewModel {
     private static class InsertFavouriteMovieTask extends AsyncTask<FavouriteMovie, Void, Void> {
         @Override
         protected Void doInBackground(FavouriteMovie... favouriteMovies) {
-            database.movieDao().insetFavouriteMovie(favouriteMovies[0]);
+            database.movieDao().insertFavouriteMovie(favouriteMovies[0]);
             return null;
         }
     }
@@ -122,8 +122,9 @@ public class MainViewModel extends AndroidViewModel {
     private static class GetFavouriteMovieTask extends AsyncTask<Integer, Void, FavouriteMovie> {
         @Override
         protected FavouriteMovie doInBackground(Integer... integers) {
-            database.movieDao().getFavouriteMovieById(integers[0]);
-            return null;
+            return database.movieDao().getFavouriteMovieById(integers[0]);
         }
     }
+
+
 }
