@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,5 +51,9 @@ public class DetailActivity extends AppCompatActivity {
         textViewRating.setText(Double.toString(movie.getVoteAverage()));
         textViewDate.setText(movie.getReleaseDate());
         textViewOverview.setText(movie.getOverview());
+    }
+
+    public void onClickChangeFavourite(View view){
+        
     }
 }
