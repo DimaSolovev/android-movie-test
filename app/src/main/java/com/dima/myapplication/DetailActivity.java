@@ -71,6 +71,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public void setFavourite() {
         favouriteMovie = viewModel.getFavouriteMovieById(id);
+
         if(favouriteMovie == null){
             imageViewAddToFavourite.setImageResource(R.drawable.favourite_add_to);
         }else {
