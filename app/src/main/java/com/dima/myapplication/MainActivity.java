@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 setMethodOfSort(isChecked);
             }
         });
+
         switchSort.setChecked(false);
         movieAdapter.setOnPosterClickListener(new MovieAdapter.OnPosterClickListener() {
             @Override
