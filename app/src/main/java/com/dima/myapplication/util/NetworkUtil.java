@@ -18,6 +18,8 @@ import java.util.concurrent.ExecutionException;
 public class NetworkUtil {
 
     private static final String BASE_URL = "https://api.themoviedb.org/3/discover/movie";
+    private static final String BASE_URL_VIDEO = "https://api.themoviedb.org/3/movie/%s/videos";
+    private static final String BASE_URL_REVIEWS = "https://api.themoviedb.org/3/movie/%s/reviews";
 
     private static final String API_KEY = "53cbc550383ffde1cccc960cf9fb606b";
     private static final String LANGUAGE = "ru-RU";
@@ -53,6 +55,56 @@ public class NetworkUtil {
         }
         return url;
     }
+
+    public static URL buildVideoURL(int id) {
+        Uri uri = Uri.parse(String.format(BASE_URL_VIDEO, id)).buildUpon()
+                .appendQueryParameter(PARAM_API_KEY, API_KEY)
+                .appendQueryParameter(PARAM_LANGUAGE, LANGUAGE)
+                .build();
+        try {
+            return new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static URL buildReviewURL(int id) {
+        Uri uri = Uri.parse(String.format(BASE_URL_REVIEWS, id)).buildUpon()
+                .appendQueryParameter(PARAM_API_KEY, API_KEY)
+                .appendQueryParameter(PARAM_LANGUAGE, LANGUAGE)
+                .build();
+        try {
+            return new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static JSONObject getJSONForVideo(int id) {
+        JSONObject result = null;
+        URL url = buildVideoURL(id);
+        try {
+            result = new JSONObject(url.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static JSONObject getJSONForReview(int id) {
+        JSONObject result = null;
+        URL url = buildReviewURL(id);
+        try {
+            result = new JSONObject(url.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
 
     public static JSONObject getJSONFromNetwork(int page, int sortBy) {
         JSONDownloadTask jsonDownloadTask = new JSONDownloadTask();
