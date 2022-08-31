@@ -59,7 +59,7 @@ public class NetworkUtil {
     public static URL buildVideoURL(int id) {
         Uri uri = Uri.parse(String.format(BASE_URL_VIDEO, id)).buildUpon()
                 .appendQueryParameter(PARAM_API_KEY, API_KEY)
-                .appendQueryParameter(PARAM_LANGUAGE, LANGUAGE)
+                //.appendQueryParameter(PARAM_LANGUAGE, LANGUAGE)
                 .build();
         try {
             return new URL(uri.toString());
@@ -72,7 +72,7 @@ public class NetworkUtil {
     public static URL buildReviewURL(int id) {
         Uri uri = Uri.parse(String.format(BASE_URL_REVIEWS, id)).buildUpon()
                 .appendQueryParameter(PARAM_API_KEY, API_KEY)
-                .appendQueryParameter(PARAM_LANGUAGE, LANGUAGE)
+                //.appendQueryParameter(PARAM_LANGUAGE, LANGUAGE)
                 .build();
         try {
             return new URL(uri.toString());
@@ -86,8 +86,8 @@ public class NetworkUtil {
         JSONObject result = null;
         URL url = buildVideoURL(id);
         try {
-            result = new JSONObject(url.toString());
-        } catch (JSONException e) {
+            result = new JSONDownloadTask().execute(url).get();
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return result;
@@ -97,8 +97,8 @@ public class NetworkUtil {
         JSONObject result = null;
         URL url = buildReviewURL(id);
         try {
-            result = new JSONObject(url.toString());
-        } catch (JSONException e) {
+            result = new JSONDownloadTask().execute(url).get();
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return result;

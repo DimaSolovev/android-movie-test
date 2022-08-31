@@ -127,7 +127,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textViewOverview"/>
+        app:layout_constraintTop_toBottomOf="@id/textViewOverview"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewReviews"
@@ -135,7 +135,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/recyclerViewTrailers"/>
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewTrailers" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
