@@ -12,12 +12,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,9 +32,10 @@ import com.dima.myapplication.util.NetworkUtil;
 
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<JSONObject> {
 
     private RecyclerView recyclerViewPosters;
     private MovieAdapter movieAdapter;
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewPopularity;
     private TextView textViewRating;
     private MainViewModel viewModel;
+    private static final int LOADER_ID = 100;
+    private LoaderManager loaderManager;
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
@@ -67,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        loaderManager = LoaderManager.getInstance(this);
         recyclerViewPosters = findViewById(R.id.recyclerViewPosters);
         movieAdapter = new MovieAdapter();
         switchSort = findViewById(R.id.switchSort);
@@ -124,14 +131,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void downloadData(int methodOfSort, int page) {
-        JSONObject jsonObject = NetworkUtil.getJSONFromNetwork(1, methodOfSort);
-        List<Movie> movies = JSONUtil.getMoviesFromJSON(jsonObject);
-        if (movies != null && !movies.isEmpty()) {
-            viewModel.deleteAllMovies();
-            for (Movie movie : movies) {
-                viewModel.insertMovie(movie);
-            }
-        }
+        URL url = NetworkUtil.buildURL(page,methodOfSort);
+        Bundle bundle = new Bundle();
+        bundle.putString("url", url.toString());
+        loaderManager.restartLoader(LOADER_ID,bundle,this);
     }
 
     public void onClickPopularity(View view) {
@@ -143,4 +146,29 @@ public class MainActivity extends AppCompatActivity {
         setMethodOfSort(true);
         switchSort.setChecked(true);
     }
+
+    @NonNull
+    @Override
+    public Loader<JSONObject> onCreateLoader(int id, @Nullable Bundle bundle) {
+        NetworkUtil.JSONLoader jsonLoader = new NetworkUtil.JSONLoader(this, bundle);
+        return jsonLoader;
+    }
+
+    @Override//когда загрузчик завершит работу возьмет все фильмы и вставит в бд
+    public void onLoadFinished(@NonNull Loader<JSONObject> loader, JSONObject jsonObject) {
+        List<Movie> movies = JSONUtil.getMoviesFromJSON(jsonObject);
+        if (movies != null && !movies.isEmpty()) {
+            viewModel.deleteAllMovies();
+            for (Movie movie : movies) {
+                viewModel.insertMovie(movie);
+            }
+        }
+        loaderManager.destroyLoader(LOADER_ID);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<JSONObject> loader) {
+
+    }
+
 }
