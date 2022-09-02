@@ -129,6 +129,11 @@ public class NetworkUtil {
     public static class JSONLoader extends AsyncTaskLoader<JSONObject> {
 
         private Bundle bundle;
+        private OnStartLoadingListener onStartLoadingListener;
+
+        public interface OnStartLoadingListener{
+            void onStartLoading();
+        }
 
         public JSONLoader(@NonNull Context context, Bundle bundle) {
             super(context);
@@ -138,6 +143,9 @@ public class NetworkUtil {
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
+            if(onStartLoadingListener != null){
+                onStartLoadingListener.onStartLoading();
+            }
             forceLoad();
         }
 
@@ -177,6 +185,10 @@ public class NetworkUtil {
                 e.printStackTrace();
             }
             return jsonObject;
+        }
+
+        public void setOnStartLoadingListener(OnStartLoadingListener onStartLoadingListener) {
+            this.onStartLoadingListener = onStartLoadingListener;
         }
     }
 

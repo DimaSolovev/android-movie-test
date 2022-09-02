@@ -46,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int LOADER_ID = 100;
     private LoaderManager loaderManager;
 
+    private static int page = 1;
+    private boolean isLoading = false;
+    private static int methodOfSort;
+
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -86,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         switchSort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                page = 1;
                 setMethodOfSort(isChecked);
             }
         });
@@ -103,20 +108,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         movieAdapter.setOnReachEndListener(new MovieAdapter.OnReachEndListener() {
             @Override
             public void onReachEnd() {
-                Toast.makeText(MainActivity.this, "End", Toast.LENGTH_SHORT).show();
+                if (!isLoading) {
+                    downloadData(methodOfSort, page);
+                }
             }
         });
         LiveData<List<Movie>> moviesFromLiveData = viewModel.getMovies();
         moviesFromLiveData.observe(this, new Observer<List<Movie>>() {
             @Override
             public void onChanged(List<Movie> movies) {
-                movieAdapter.setMovies(movies);
+
             }
         });
     }
 
     private void setMethodOfSort(boolean isChecked) {
-        int methodOfSort;
         if (isChecked) {
             methodOfSort = NetworkUtil.TOP_RATED;
             textViewRating.setTextColor(getResources().getColor(R.color.pink));
@@ -127,14 +133,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             textViewPopularity.setTextColor(getResources().getColor(R.color.pink));
             textViewRating.setTextColor(getResources().getColor(R.color.white));
         }
-        downloadData(methodOfSort, 1);
+        downloadData(methodOfSort, page);
     }
 
     private void downloadData(int methodOfSort, int page) {
-        URL url = NetworkUtil.buildURL(page,methodOfSort);
+        URL url = NetworkUtil.buildURL(page, methodOfSort);
         Bundle bundle = new Bundle();
         bundle.putString("url", url.toString());
-        loaderManager.restartLoader(LOADER_ID,bundle,this);
+        loaderManager.restartLoader(LOADER_ID, bundle, this);
     }
 
     public void onClickPopularity(View view) {
@@ -149,8 +155,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @NonNull
     @Override
-    public Loader<JSONObject> onCreateLoader(int id, @Nullable Bundle bundle) {
+    public Loader<JSONObject> onCreateLoader(int id, @Nullable Bundle bundle) {//начало загрузки
         NetworkUtil.JSONLoader jsonLoader = new NetworkUtil.JSONLoader(this, bundle);
+        jsonLoader.setOnStartLoadingListener(new NetworkUtil.JSONLoader.OnStartLoadingListener() {
+            @Override
+            public void onStartLoading() {
+                isLoading = true;
+            }
+        });
         return jsonLoader;
     }
 
@@ -162,7 +174,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             for (Movie movie : movies) {
                 viewModel.insertMovie(movie);
             }
+            movieAdapter.addMovies(movies);
+            page++;
         }
+        isLoading = false;
         loaderManager.destroyLoader(LOADER_ID);
     }
 

@@ -42,11 +42,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
-        Movie movie = movies.get(position);
-        Picasso.get().load(movie.getPosterPath()).into(holder.imageViewSmallPoster);
-        if (position == movies.size() - 4 && onReachEndListener != null){
+        if (movies.size() >= 20 && position > movies.size() - 4 && onReachEndListener != null) {
             onReachEndListener.onReachEnd();
         }
+        Movie movie = movies.get(position);
+        Picasso.get().load(movie.getPosterPath()).into(holder.imageViewSmallPoster);
     }
 
     @Override
@@ -76,8 +76,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return movies;
     }
 
-    public void addMovies(ArrayList<Movie> movies) {
-        movies.addAll(movies);
+    public void addMovies(List<Movie> movie) {
+        movies.addAll(movie);
         notifyDataSetChanged();
     }
 
