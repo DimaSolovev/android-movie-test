@@ -1,7 +1,13 @@
 package com.dima.myapplication.util;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.loader.content.AsyncTaskLoader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +52,7 @@ public class NetworkUtil {
         }
         Uri uri = Uri.parse(BASE_URL).buildUpon()
                 .appendQueryParameter(PARAM_API_KEY, API_KEY)
-                .appendQueryParameter(PARAM_MIN_VOTE_COUNT,MIN_VOTE_COUNT_VALUE)
+                .appendQueryParameter(PARAM_MIN_VOTE_COUNT, MIN_VOTE_COUNT_VALUE)
                 .appendQueryParameter(PARAM_LANGUAGE, LANGUAGE)
                 .appendQueryParameter(PARAM_SORT_BY, sort)
                 .appendQueryParameter(PARAM_PAGE, Integer.toString(page))
@@ -108,7 +114,6 @@ public class NetworkUtil {
     }
 
 
-
     public static JSONObject getJSONFromNetwork(int page, int sortBy) {
         JSONDownloadTask jsonDownloadTask = new JSONDownloadTask();
         JSONObject jsonObject = null;
@@ -119,6 +124,60 @@ public class NetworkUtil {
             e.printStackTrace();
         }
         return jsonObject;
+    }
+
+    public static class JSONLoader extends AsyncTaskLoader<JSONObject> {
+
+        private Bundle bundle;
+
+        public JSONLoader(@NonNull Context context, Bundle bundle) {
+            super(context);
+            this.bundle = bundle;
+        }
+
+        @Override
+        protected void onStartLoading() {
+            super.onStartLoading();
+            forceLoad();
+        }
+
+        @Nullable
+        @Override
+        public JSONObject loadInBackground() {
+            if (bundle == null) {
+                return null;
+            }
+            String urlAsString = bundle.getString("url");
+            URL url = null;
+            try {
+                url = new URL(urlAsString);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            JSONObject jsonObject = null;
+            if (url == null) {
+                return null;
+            }
+            HttpURLConnection connection = null;
+            try {
+                StringBuilder builder = new StringBuilder();
+                connection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = connection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(reader);
+                String line = bufferedReader.readLine();
+                while (line != null) {
+                    builder.append(line);
+                    line = bufferedReader.readLine();
+                }
+                jsonObject = new JSONObject(builder.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return jsonObject;
+        }
     }
 
     private static class JSONDownloadTask extends AsyncTask<URL, Void, JSONObject> {
