@@ -25,11 +25,13 @@ public class NetworkUtil {
     private static final String LANGUAGE = "ru-RU";
     private static final String SORT_BY_POPULARITY = "popularity.desc";
     private static final String SORT_BY_TOP_RATED = "vote_count.desc";
+    private static final String MIN_VOTE_COUNT_VALUE = "1000";
 
     private static final String PARAM_API_KEY = "api_key";
     private static final String PARAM_LANGUAGE = "language";
     private static final String PARAM_SORT_BY = "sort_by";
     private static final String PARAM_PAGE = "page";
+    private static final String PARAM_MIN_VOTE_COUNT = "vote_count_gte";
 
     public static final int POPULARITY = 0;
     public static final int TOP_RATED = 1;
@@ -44,6 +46,7 @@ public class NetworkUtil {
         }
         Uri uri = Uri.parse(BASE_URL).buildUpon()
                 .appendQueryParameter(PARAM_API_KEY, API_KEY)
+                .appendQueryParameter(PARAM_MIN_VOTE_COUNT,MIN_VOTE_COUNT_VALUE)
                 .appendQueryParameter(PARAM_LANGUAGE, LANGUAGE)
                 .appendQueryParameter(PARAM_SORT_BY, sort)
                 .appendQueryParameter(PARAM_PAGE, Integer.toString(page))
