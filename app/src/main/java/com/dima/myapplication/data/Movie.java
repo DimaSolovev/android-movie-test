@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "movies")
 public class Movie {
+
     @PrimaryKey(autoGenerate = true)
     private int uniqueId;
     private int id;
@@ -19,7 +20,7 @@ public class Movie {
     private double voteAverage;
     private String releaseDate;
 
-    @Ignore
+
     public Movie(int uniqueId, int id, int voteCount, String title, String originalTitle, String overview, String posterPath, String bigPosterPath, String backgroundPath, double voteAverage, String releaseDate) {
         this.uniqueId = uniqueId;
         this.id = id;
@@ -34,6 +35,7 @@ public class Movie {
         this.releaseDate = releaseDate;
     }
 
+    @Ignore
     public Movie(int id, int voteCount, String title, String originalTitle, String overview, String posterPath, String bigPosterPath, String backgroundPath, double voteAverage, String releaseDate) {
         this.id = id;
         this.voteCount = voteCount;
