@@ -128,11 +128,15 @@ public class NetworkUtil {
 
     public static class JSONLoader extends AsyncTaskLoader<JSONObject> {
 
-        private Bundle bundle;
+        private final Bundle bundle;
         private OnStartLoadingListener onStartLoadingListener;
 
-        public interface OnStartLoadingListener{
+        public interface OnStartLoadingListener {
             void onStartLoading();
+        }
+
+        public void setOnStartLoadingListener(OnStartLoadingListener onStartLoadingListener) {
+            this.onStartLoadingListener = onStartLoadingListener;
         }
 
         public JSONLoader(@NonNull Context context, Bundle bundle) {
@@ -143,7 +147,7 @@ public class NetworkUtil {
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
-            if(onStartLoadingListener != null){
+            if (onStartLoadingListener != null) {
                 onStartLoadingListener.onStartLoading();
             }
             forceLoad();
@@ -162,33 +166,31 @@ public class NetworkUtil {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            JSONObject jsonObject = null;
+            JSONObject result = null;
             if (url == null) {
-                return null;
+                return result;
             }
             HttpURLConnection connection = null;
             try {
-                StringBuilder builder = new StringBuilder();
                 connection = (HttpURLConnection) url.openConnection();
                 InputStream inputStream = connection.getInputStream();
-                InputStreamReader reader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(reader);
-                String line = bufferedReader.readLine();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader reader = new BufferedReader(inputStreamReader);
+                StringBuilder builder = new StringBuilder();
+                String line = reader.readLine();
                 while (line != null) {
                     builder.append(line);
-                    line = bufferedReader.readLine();
+                    line = reader.readLine();
                 }
-                jsonObject = new JSONObject(builder.toString());
-            } catch (IOException e) {
+                result = new JSONObject(builder.toString());
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
             }
-            return jsonObject;
-        }
-
-        public void setOnStartLoadingListener(OnStartLoadingListener onStartLoadingListener) {
-            this.onStartLoadingListener = onStartLoadingListener;
+            return result;
         }
     }
 
