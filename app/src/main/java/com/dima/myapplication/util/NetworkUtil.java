@@ -28,7 +28,7 @@ public class NetworkUtil {
     private static final String BASE_URL_REVIEWS = "https://api.themoviedb.org/3/movie/%s/reviews";
 
     private static final String API_KEY = "53cbc550383ffde1cccc960cf9fb606b";
-    private static final String LANGUAGE = "ru-RU";
+    //private static final String LANGUAGE = "ru-RU";
     private static final String SORT_BY_POPULARITY = "popularity.desc";
     private static final String SORT_BY_TOP_RATED = "vote_count.desc";
     private static final String MIN_VOTE_COUNT_VALUE = "1000";
@@ -42,7 +42,7 @@ public class NetworkUtil {
     public static final int POPULARITY = 0;
     public static final int TOP_RATED = 1;
 
-    public static URL buildURL(int page, int sortBy) {
+    public static URL buildURL(int page, int sortBy, String lang) {
         String sort = null;
         URL url = null;
         if (sortBy == 0) {
@@ -53,7 +53,7 @@ public class NetworkUtil {
         Uri uri = Uri.parse(BASE_URL).buildUpon()
                 .appendQueryParameter(PARAM_API_KEY, API_KEY)
                 .appendQueryParameter(PARAM_MIN_VOTE_COUNT, MIN_VOTE_COUNT_VALUE)
-                .appendQueryParameter(PARAM_LANGUAGE, LANGUAGE)
+                .appendQueryParameter(PARAM_LANGUAGE, lang)
                 .appendQueryParameter(PARAM_SORT_BY, sort)
                 .appendQueryParameter(PARAM_PAGE, Integer.toString(page))
                 .build();
@@ -65,10 +65,10 @@ public class NetworkUtil {
         return url;
     }
 
-    public static URL buildVideoURL(int id) {
+    public static URL buildVideoURL(int id, String language) {
         Uri uri = Uri.parse(String.format(BASE_URL_VIDEO, id)).buildUpon()
                 .appendQueryParameter(PARAM_API_KEY, API_KEY)
-                //.appendQueryParameter(PARAM_LANGUAGE, LANGUAGE)
+                .appendQueryParameter(PARAM_LANGUAGE, language)
                 .build();
         try {
             return new URL(uri.toString());
@@ -78,10 +78,10 @@ public class NetworkUtil {
         return null;
     }
 
-    public static URL buildReviewURL(int id) {
+    public static URL buildReviewURL(int id, String lang) {
         Uri uri = Uri.parse(String.format(BASE_URL_REVIEWS, id)).buildUpon()
                 .appendQueryParameter(PARAM_API_KEY, API_KEY)
-                //.appendQueryParameter(PARAM_LANGUAGE, LANGUAGE)
+                .appendQueryParameter(PARAM_LANGUAGE, lang)
                 .build();
         try {
             return new URL(uri.toString());
@@ -91,9 +91,9 @@ public class NetworkUtil {
         return null;
     }
 
-    public static JSONObject getJSONForVideo(int id) {
+    public static JSONObject getJSONForVideo(int id, String lang) {
         JSONObject result = null;
-        URL url = buildVideoURL(id);
+        URL url = buildVideoURL(id, lang);
         try {
             result = new JSONDownloadTask().execute(url).get();
         } catch (ExecutionException | InterruptedException e) {
@@ -102,9 +102,9 @@ public class NetworkUtil {
         return result;
     }
 
-    public static JSONObject getJSONForReview(int id) {
+    public static JSONObject getJSONForReview(int id, String lang) {
         JSONObject result = null;
-        URL url = buildReviewURL(id);
+        URL url = buildReviewURL(id, lang);
         try {
             result = new JSONDownloadTask().execute(url).get();
         } catch (ExecutionException | InterruptedException e) {
@@ -114,10 +114,10 @@ public class NetworkUtil {
     }
 
 
-    public static JSONObject getJSONFromNetwork(int page, int sortBy) {
+    public static JSONObject getJSONFromNetwork(int page, int sortBy, String lang) {
         JSONDownloadTask jsonDownloadTask = new JSONDownloadTask();
         JSONObject jsonObject = null;
-        URL url = buildURL(page, sortBy);
+        URL url = buildURL(page, sortBy, lang);
         try {
             jsonObject = jsonDownloadTask.execute(url).get();
         } catch (ExecutionException | InterruptedException e) {

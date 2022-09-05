@@ -3,6 +3,7 @@ package com.dima.myapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.loader.app.LoaderManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,9 +29,11 @@ import com.dima.myapplication.util.JSONUtil;
 import com.dima.myapplication.util.NetworkUtil;
 import com.squareup.picasso.Picasso;
 
+import org.intellij.lang.annotations.Language;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Locale;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -50,6 +53,8 @@ public class DetailActivity extends AppCompatActivity {
     private Movie movie;
     private MainViewModel viewModel;
     private FavouriteMovie favouriteMovie;
+
+    private static String lang;
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
@@ -78,6 +83,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        lang = Locale.getDefault().getLanguage();
         imageViewBigPoster = findViewById(R.id.imageViewBigPoster);
         textViewTitle = findViewById(R.id.textViewTitle);
         textViewOriginalTitle = findViewById(R.id.textViewOriginalTitle);
@@ -115,8 +121,8 @@ public class DetailActivity extends AppCompatActivity {
         recyclerViewReview.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewReview.setAdapter(reviewAdapter);
         recyclerViewTrailer.setAdapter(trailerAdapter);
-        JSONObject jsonObjectTrailers = NetworkUtil.getJSONForVideo(movie.getId());
-        JSONObject jsonObjectReviews = NetworkUtil.getJSONForReview(movie.getId());
+        JSONObject jsonObjectTrailers = NetworkUtil.getJSONForVideo(movie.getId(), lang);
+        JSONObject jsonObjectReviews = NetworkUtil.getJSONForReview(movie.getId(), lang);
         List<Trailer> trailers = JSONUtil.getTrailersFromJSON(jsonObjectTrailers);
         List<Review> reviews = JSONUtil.getReviewsFromJSON(jsonObjectReviews);
         trailerAdapter.setTrailers(trailers);
